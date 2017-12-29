@@ -12,10 +12,6 @@ public class AssetBundleUpdater : MonoBehaviour
     public static AssetBundleManifest AssetBundleManifest { get { return assetBundleManifest; } }
     static AssetBundleManifest assetBundleManifest;
     /// <summary>
-    /// UI界面显示的提示信息
-    /// </summary>
-    private Text ShowMessage;
-    /// <summary>
     /// BundleManiFest
     /// </summary>
     private string filelist = "AssetsResources";
@@ -31,9 +27,6 @@ public class AssetBundleUpdater : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
-        ShowMessage = transform.FindChild("Info").GetComponent<Text>();
-        ShowMessage.text = "正在初始化......";
         if (Application.platform != RuntimePlatform.WindowsEditor)
             CheckBundleList();
         //Debug.Log(BuildPath._Instance.ResourceFolder);
@@ -104,7 +97,6 @@ public class AssetBundleUpdater : MonoBehaviour
     /// <returns></returns>
     IEnumerator CheckResources(Action UpdateData = null)
     {
-        ShowMessage.text = "正在检查资源......";
 
 
         string localFilePath = BuildPath.ResourceFolder + filelist;    //本地外部路径
@@ -157,7 +149,6 @@ public class AssetBundleUpdater : MonoBehaviour
                         }
                         //显示检查进度
                         index++;
-                        ShowMessage.text = "正在检查资源......" + (int)((float)index * 100 / count) + "%";
 
                     }
                 }
@@ -167,7 +158,6 @@ public class AssetBundleUpdater : MonoBehaviour
                 Debug.Log("本地资源目录不存在，下载全部资源！");
                 needUpdateBundle = newManifestInfo.DictBundleNamesHashID;
             }
-            ShowMessage.text = "资源检查完毕";
             yield return new WaitForSeconds(0.5f);  //等待0.5s
 
             if (UpdateData != null)
@@ -186,13 +176,11 @@ public class AssetBundleUpdater : MonoBehaviour
         //如果需要更新资源
         if (needUpdateBundle != null && needUpdateBundle.Count > 0)
         {
-            ShowMessage.text = "正在更新资源......";
             int num = 0;
             foreach (var p in needUpdateBundle)
             {
                 num++;
                 string inFilePath = BuildPath.ServerResourcePath + p.Key;
-                while (!Caching.enabled) yield return null;
                 WWW wwwfile = WWW.LoadFromCacheOrDownload(inFilePath, p.Value);
 
                 yield return wwwfile;
@@ -206,10 +194,8 @@ public class AssetBundleUpdater : MonoBehaviour
                     Debug.Log(p.Key + "资源缓存完成：");
                 }
                 wwwfile.Dispose();
-                ShowMessage.text = "正在更新资源......" + (int)((float)num * 100 / needUpdateBundle.Count) + "%" + '\n' + "本次更新不耗费流量";
             }
             yield return StartCoroutine(DownloadResource(filelist)); //保存最新的ManiFest
-            ShowMessage.text = "资源更新完成！";
             yield return new WaitForSeconds(0.5f);
             Debug.Log("更新完成!!!");
         }
@@ -307,12 +293,10 @@ public class AssetBundleUpdater : MonoBehaviour
                 {
                     Debug.Log("sss");
                     yield return DownloadResource(bundleList[i], manifest.GetAssetBundleHash(bundleList[i]));    //等待返回下载结果
-                    ShowMessage.text = "第一次运行，解压资源..." + (int)((float)i * 100 / bundleList.Length) + "%" + '\n' + "解压不耗费流量";
                 }
             }
         }
 
-        ShowMessage.text = "解压完成，等待初始化...";
         yield return new WaitForSeconds(1f);    //资源全部导出后等待1s
 
         if (UpdateReoures != null)

@@ -118,8 +118,6 @@ namespace AssetBundles
         {
             if (Application.isEditor)
                 return "file://" + System.Environment.CurrentDirectory.Replace("\\", "/"); // Use the build output folder directly.
-            else if (Application.isWebPlayer)
-                return System.IO.Path.GetDirectoryName(Application.absoluteURL).Replace("\\", "/") + "/StreamingAssets";
             else if (Application.isMobilePlatform || Application.isConsolePlatform)
                 return Application.streamingAssetsPath;
             else // For standalone player.
@@ -288,6 +286,7 @@ namespace AssetBundles
             }
         }
 
+
         // Where we actuall call WWW to download the assetBundle.
         static protected bool LoadAssetBundleInternal(string assetBundleName, bool isLoadingAssetBundleManifest)
         {
@@ -443,6 +442,7 @@ namespace AssetBundles
                     i++;
             }
         }
+
 
         // Load asset from the given assetBundle.
         static public AssetBundleLoadAssetOperation LoadAssetAsync(string assetBundleName, string assetName, System.Type type)

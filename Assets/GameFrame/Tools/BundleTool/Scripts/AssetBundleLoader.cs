@@ -246,8 +246,6 @@ public class AssetBundleLoader : MonoBehaviour
                 case RuntimePlatform.WindowsEditor:
                 case RuntimePlatform.WindowsPlayer:
                     return "Windows";
-                case RuntimePlatform.WindowsWebPlayer:
-                    return "WebPlayer";
                 case RuntimePlatform.Android:
                     return "Android";
                 case RuntimePlatform.IPhonePlayer:
